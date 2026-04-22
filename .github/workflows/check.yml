@@ -1,0 +1,27 @@
+name: Check Website
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install link checker
+        run: npm install -g htmlhint broken-link-checker
+
+      - name: Check HTML syntax
+        run: htmlhint "**/*.html"
+
+      - name: Start local server
+        run: |
+          npm install -g http-server
+          http-server . -p 8080 &
+
+      - name: Check links
+        run: blc http://localhost:8080 -ro
